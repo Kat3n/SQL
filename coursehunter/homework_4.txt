@@ -1,0 +1,39 @@
+/*1. Найти заказчиков и обслуживающих их заказы сотрудников таких, что и заказчики и сотрудники из города London, 
+     а доставка идёт компанией Speedy Express. Вывести компанию заказчика и ФИО сотрудника.
+2. Найти активные (см. поле discontinued) продукты из категории Beverages и Seafood, которых в продаже менее 20 единиц.
+   Вывести наименование продуктов, кол-во единиц в продаже, имя контакта поставщика и его телефонный номер.
+3. Найти заказчиков, не сделавших ни одного заказа. Вывести имя заказчика и order_id.
+4. Переписать предыдущий запрос, использовав симметричный вид джойна (подсказка: речь о LEFT и RIGHT).*/
+
+
+select customers.company_name, concat(first_name, ' ', last_name)
+from orders
+join customers using(customer_id)
+join employees using(employee_id)
+join shippers on orders.ship_via = shippers.shipper_id
+where customers.city = 'London' and employees.city = 'London' and shippers.company_name = 'Speedy Express'
+
+
+
+select product_name, units_in_stock, contact_name, phone
+from products
+join categories using(category_id)
+join suppliers using(supplier_id)
+where category_name in ('Beverages', 'Seafood') and discontinued = 0 and units_in_stock < 20
+order by units_in_stock
+
+
+
+select contact_name, order_id
+from customers
+left join orders using(customer_id)
+where order_id is null
+
+
+
+select contact_name, order_id
+from orders
+right join customers using(customer_id)
+where order_id is null
+
+
